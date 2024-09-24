@@ -906,5 +906,9 @@ DEBUG = not PRODUCTION
 
 *8. Menjalankan Proyek Django dengan command `python manage.py runserver` dan buka  http://localhost:8000/ di browser favoritmu untuk melihat hasilnya. 
 
+## Bukti 2 akun yang telah di register dengan 3 dummy data
+![image](https://github.com/user-attachments/assets/07466bec-6e82-48fb-84f2-8b54b6e94a65)
+![image](https://github.com/user-attachments/assets/55cecf72-9a8f-4e75-b196-4eca7b8fcc0a)
+
 </details>
 
