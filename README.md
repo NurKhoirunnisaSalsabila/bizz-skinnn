@@ -866,7 +866,45 @@ Cookies yang mengandung informasi sensitif, seperti session ID, sebaiknya diberi
   ```
 Potongan kode di atas mendefinisikan model `Product` yang memiliki relasi banyak-ke-satu (many-to-one) dengan model `User` dari Django. Yang berarti setiap instance `Product` terkait dengan satu instance `User`. Relasi ini diimplementasikan menggunakan ForeignKey.
 
-- 
+- Mengubah potongan kode pada fungsi `create_product` menjadi kode berikut:
+  ```python
+  def create_product(request):
+    form = ProductForm(request.POST or None)
+
+    if form.is_valid() and request.method == "POST":
+        product = form.save(commit=False)
+        product.user = request.user
+        product.save()
+        return redirect('main:show_main')
+
+    context = {'form': form}
+    return render(request, "create_product.html", context)
+    ...
+    ```
+-Mengubah value dari `product` dan `context` pada fungsi `show_main` menjadi seperti berikut:
+  ```python
+  @login_required(login_url='/login')
+  def show_main(request):
+      products = Product.objects.filter(user=request.user)
+  
+      context = {
+          'name': request.user.username,
+          ...
+  ```
+**6. Melakukan Migrasi**
+- Simpan semua perubahan, dan lakukan migrasi model dengan  `python manage.py makemigrations`.
+- Lakukan `python manage.py migrate `untuk mengaplikasikan migrasi yang dilakukan pada poin sebelumnya.
+
+**7. Import OS dan ganti variabel DEBUG dari berkas `settings.py`.**
+```python
+import os
+...
+PRODUCTION = os.getenv("PRODUCTION", False)
+DEBUG = not PRODUCTION
+....
+```
+
+*8. Menjalankan Proyek Django dengan command `python manage.py runserver` dan buka  http://localhost:8000/ di browser favoritmu untuk melihat hasilnya. 
 
 </details>
 
