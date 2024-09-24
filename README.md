@@ -661,6 +661,212 @@ Django menyediakan beberapa pengaturan untuk membuat cookies lebih aman:
 *Kesimpulan:*
 Cookies yang mengandung informasi sensitif, seperti session ID, sebaiknya diberi atribut HttpOnly, sehingga tidak bisa diakses oleh JavaScript dan mengurangi risiko serangan cross-site scripting (XSS). Selain itu, cookies yang dikirim melalui koneksi aman (HTTPS) harus memiliki atribut Secure, untuk memastikan cookies hanya dikirim melalui koneksi yang terenkripsi. Atribut SameSite juga penting, karena mencegah cookies dikirimkan dalam permintaan lintas situs, melindungi dari serangan cross-site request forgery (CSRF). Cookies pihak ketiga yang digunakan untuk iklan atau pelacakan bisa dianggap mengganggu privasi, dan beberapa browser kini memblokir cookies ini secara otomatis.
 
+## 5. **Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).**
+
+**1. Membuat Fungsi dan Form Registrasi**
+- Membuat fungsi `register` ke dalam `views.py` yang ada pada subdirektori `main`. Tujuannya untuk membuat formulir registrasi secara otomatis dan menghasilkan akun pengguna ketika data di-submit dari form.
+  ```python
+  from django.contrib.auth.forms import UserCreationForm
+  from django.contrib import messages
+
+  ...
+  def register(request):
+    form = UserCreationForm()
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your account has been successfully created!')
+            return redirect('main:login')
+    context = {'form':form}
+    return render(request, 'register.html', context)
+  ...
+  ```
+- Membuat file `register.html` pada direktori `main/templates`.
+  ```html
+  {% extends 'base.html' %}
+
+  {% block meta %}
+  <title>Register</title>
+  {% endblock meta %}
+  
+  {% block content %}
+  
+  <div class="login">
+    <h1>Register</h1>
+  
+    <form method="POST">
+      {% csrf_token %}
+      <table>
+        {{ form.as_table }}
+        <tr>
+          <td></td>
+          <td><input type="submit" name="submit" value="Daftar" /></td>
+        </tr>
+      </table>
+    </form>
+  
+    {% if messages %}
+    <ul>
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+  
+  {% endblock content %}
+  ```
+- Melakukan routing untuk `register` di `urls.py` yang ada pada subdirektori `main`
+  ```python
+  from main.views import register
+
+  urlpatterns = [
+     ...
+     path('register/', register, name='register'),
+   ]
+  ```
+
+**2. Membuat Fungsi Login**
+- Buat fungsi `login_user` di `views.py` yang ada pada subdirektori `main`.
+- Tambahkan import `authenticate`, `login`, dan `AuthenticationForm` pada bagian paling atas.
+  ```python
+  from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+  from django.contrib.auth import authenticate, login
+  ...
+  def login_user(request):
+   if request.method == 'POST':
+      form = AuthenticationForm(data=request.POST)
+
+      if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('main:show_main')
+
+   else:
+      form = AuthenticationForm(request)
+   context = {'form': form}
+   return render(request, 'login.html', context)
+  ...
+  ```
+  - Setelah berhasil login, set cookie `last_login.` dan fungsi `login_user` menjadi seperti berikut:
+    ```python
+    from django.contrib.auth.forms import AuthenticationForm
+    from django.contrib.auth import authenticate, login
+    import datetime
+    
+    def login_user(request):
+        if request.method == 'POST':
+            form = AuthenticationForm(data=request.POST)
+            if form.is_valid():
+                user = form.get_user()
+                login(request, user)
+                response = HttpResponseRedirect(reverse("main:show_main"))
+                response.set_cookie('last_login', str(datetime.datetime.now()))
+                return response
+        else:
+            form = AuthenticationForm()
+        return render(request, 'login.html', {'form': form})
+    ```
+- Membuat file `login.html` pada direktori `main/templates`.
+  ```html
+  {% extends 'base.html' %}
+
+  {% block meta %}
+  <title>Login</title>
+  {% endblock meta %}
+  
+  {% block content %}
+  <div class="login">
+    <h1>Login</h1>
+  
+    <form method="POST" action="">
+      {% csrf_token %}
+      <table>
+        {{ form.as_table }}
+        <tr>
+          <td></td>
+          <td><input class="btn login_btn" type="submit" value="Login" /></td>
+        </tr>
+      </table>
+    </form>
+  
+    {% if messages %}
+    <ul>
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %} Don't have an account yet?
+    <a href="{% url 'main:register' %}">Register Now</a>
+  </div>
+  
+  {% endblock content %}
+  ```
+-Melakukan routing untuk `login` di `urls.py` yang ada pada subdirektori `main`
+  ```python
+  from main.views import login_user
+
+  urlpatterns = [
+    ...
+    path('login/', login_user, name='login'),
+  ]
+  ```
+
+**3. Membuat Fungsi Logout**
+- Buat fungsi `logout_user` di `views.py` yang ada pada subdirektori `main`.
+- Tambahkan import `logout` pada bagian paling atas.
+  ```python
+  from django.contrib.auth import logout
+  ...
+  def logout_user(request):
+    logout(request)
+    return redirect('main:login')
+  ```
+- Menambahkan potongan kode berikut pada file `main.html` pada direktori `main/templates`.
+  ```html
+    ...
+    <a href="{% url 'main:logout' %}">
+      <button>Logout</button>
+    </a>
+    ...
+  ```
+-Melakukan routing untuk `logout` di `urls.py` yang ada pada subdirektori `main`
+  ```python
+  from main.views import logout_user
+
+  urlpatterns = [
+    ...
+    path('logout/', logout_user, name='logout'),
+  ]
+  ```
+
+**4. Merestriksi Akses Halaman Main**
+- Menambahkan import decorator `login_required` pada bagian paling atas di `views.py` yang ada pada subdirektori `main`.
+- Menambahkan potongan kode `@login_required(login_url='/login')` di atas fungsi `show_main` agar halaman `main` hanya dapat diakses oleh pengguna yang sudah login (terautentikasi).
+  ```python
+  from django.contrib.auth.decorators import login_required
+  
+  ...
+  @login_required(login_url='/login')
+  def show_main(request):
+  ...
+  ```
+**4. Menghubungkan Model `Product` dengan `User`**
+- Menambahkan kode berikut di `models.py` yang ada pada subdirektori `main.
+  ```python
+  ...
+  from django.contrib.auth.models import User
+  ...
+  
+  class Product(models.Model):
+      user = models.ForeignKey(User, on_delete=models.CASCADE)
+  ...
+  ```
+Potongan kode di atas mendefinisikan model `Product` yang memiliki relasi banyak-ke-satu (many-to-one) dengan model `User` dari Django. Yang berarti setiap instance `Product` terkait dengan satu instance `User`. Relasi ini diimplementasikan menggunakan ForeignKey.
+
+- 
 
 </details>
 
