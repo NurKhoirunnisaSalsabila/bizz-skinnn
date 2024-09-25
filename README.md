@@ -804,7 +804,7 @@ Cookies yang mengandung informasi sensitif, seperti session ID, sebaiknya diberi
   
   {% endblock content %}
   ```
--Melakukan routing untuk `login` di `urls.py` yang ada pada subdirektori `main`
+- Melakukan routing untuk `login` di `urls.py` yang ada pada subdirektori `main`
   ```python
   from main.views import login_user
 
@@ -832,7 +832,7 @@ Cookies yang mengandung informasi sensitif, seperti session ID, sebaiknya diberi
     </a>
     ...
   ```
--Melakukan routing untuk `logout` di `urls.py` yang ada pada subdirektori `main`
+- Melakukan routing untuk `logout` di `urls.py` yang ada pada subdirektori `main`
   ```python
   from main.views import logout_user
 
@@ -881,7 +881,7 @@ Potongan kode di atas mendefinisikan model `Product` yang memiliki relasi banyak
     return render(request, "create_product.html", context)
     ...
     ```
--Mengubah value dari `product` dan `context` pada fungsi `show_main` menjadi seperti berikut:
+- Mengubah value dari `product` dan `context` pada fungsi `show_main` menjadi seperti berikut:
   ```python
   @login_required(login_url='/login')
   def show_main(request):
