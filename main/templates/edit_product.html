@@ -6,11 +6,12 @@
 
 {% block content %}
 {% include 'navbar.html' %}
-<div class="flex flex-col min-h-screen bg-gray-100">
-  <div class="container mx-auto px-4 py-8 mt-16 max-w-xl">
-    <h1 class="text-3xl font-bold text-center mb-8 text-black">Edit Product</h1>
+
+<div class="flex flex-col min-h-screen bg-cover bg-center" style="background-image: url('{% static 'image/landing-page.png' %}');">
+  <div class="container mx-auto px-4 py-8 mt-16 max-w-xl bg-white bg-opacity-90 rounded-2xl shadow-lg">
+    <h1 class="text-3xl font-bold text-center mb-8 text-maroon-700 font-cursive">Edit Product</h1>
   
-    <div class="bg-white rounded-lg p-6 form-style">
+    <div class="bg-white rounded-2xl p-6 shadow-lg">
       <form method="POST" class="space-y-6">
           {% csrf_token %}
           {% for field in form %}
@@ -30,12 +31,31 @@
               </div>
           {% endfor %}
           <div class="flex justify-center mt-6">
-              <button type="submit" class="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 transition duration-300 ease-in-out w-full">
+              <button type="submit" class="bg-[#800000] text-white font-semibold px-6 py-3 rounded-lg hover:bg-maroon-700 transition duration-300 ease-in-out w-full">
                   Edit Product
               </button>
           </div>
       </form>
-  </div>
+    </div>
   </div>
 </div>
-{% endblock %}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+  .font-cursive {
+    font-family: 'Pacifico', cursive;
+  }
+
+  @media (min-width: 768px) {
+    .grid-cols-1 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .grid-cols-1 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+  }
+</style>
+{% endblock content %}
