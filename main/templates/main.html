@@ -1,74 +1,49 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+<title>BizzSkin!</title>
+{% endblock meta %}
 {% block content %}
-<h1>Welcome to BizzSkin!</h1>
-
-<h5>NPM: </h5>
-<p>{{ npm }}<p>
-
-<h5>Name:</h5>
-<p>{{ name }}</p>
-
-<h5>Class:</h5>
-<p>{{ class }}</p>
-
-{% if not products %}
-        <p>Belum ada data produk pada Aplikasi Bizz Skin!</p>
-        {% else %}
-        <style>
-            table {
-                width: 100%;
-                border-collapse: separate;
-                border-spacing: 0 10px; /* Menambah jarak vertikal antar baris */
-            }
-            th, td {
-                padding: 10px 15px; /* Menambah ruang dalam sel */
-                text-align: left;
-                border-bottom: 1px solid #ddd;
-            }
-            th {
-                background-color: #f2f2f2;
-                font-weight: bold;
-            }
-            .nama-produk { width: 25%; }
-            .harga-produk { width: 15%; }
-            .deskripsi-produk { width: 20%; }
-            /* .tipe-kulit { width: 15%; } */
-            /* .stok-produk { width: 15%; } */
-            /* .rating-produk { width: 10%; } */
-        </style>
-        
-        <table>
-            <tr>
-                <th class="nama-produk">Nama Produk</th>
-                <th class="harga-produk">Harga Produk</th>
-                <th class="deskripsi-produk">Deskripsi Produk</th>
-                <!-- <th class="tipe-kulit">Tipe Kulit</th>
-                <th class="stok-produk">Stok Produk</th>
-                <th class="rating-produk">Rating Produk</th> -->
-            </tr>
-            {% for product in products %}
-            <tr>
-                <td class="nama-produk">{{ product.name }}</td>
-                <td class="harga-produk">{{ product.price }}</td>
-                <td class="deskripsi-produk">{{ product.description }}</td>
-                <!-- <td class="tipe-kulit">{{ product.skin_type }}</td>
-                <td class="stok-produk">{{ product.stock }}</td>
-                <td class="rating-produk">{{ product.rating }}</td> -->
-            </tr>
-            {% endfor %}
-        </table>
-        {% endif %}
-
-        <br />
-
-        <a href="{% url 'main:create_product' %}">
-            <button>Tambah Produk Baru</button>
+{% include 'navbar.html' %}
+<div class="overflow-x-hidden px-4 md:px-8 pb-8 pt-24 min-h-screen bg-gray-100 flex flex-col">
+  <div class="p-2 mb-6 relative">
+    <div class="relative grid grid-cols-1 z-30 md:grid-cols-3 gap-8">
+      {% include "card_info.html" with title='NPM' value=npm %}
+      {% include "card_info.html" with title='Name' value=name %}
+      {% include "card_info.html" with title='Class' value=class %}
+    </div>
+    <div class="w-full px-6  absolute top-[44px] left-0 z-20 hidden md:flex">
+      <div class="w-full min-h-4 bg-indigo-700">
+      </div>
+    </div>
+    <div class="h-full w-full py-6  absolute top-0 left-0 z-20 md:hidden flex ">
+      <div class="h-full min-w-4 bg-indigo-700 mx-auto">
+      </div>
+    </div>
+</div>
+    <div class="px-3 mb-4">
+      <div class="flex rounded-md items-center bg-indigo-600 py-2 px-4 w-fit">
+        <h1 class="text-white text-center">Last Login: {{last_login}}</h1>
+      </div>
+    </div>
+    <div class="flex justify-end mb-6">
+        <a href="{% url 'main:create_product' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+            Add New Product
         </a>
-
-        <a href="{% url 'main:logout' %}">
-            <button>Logout</button>
-        </a>
-        <h5>Sesi terakhir login: {{ last_login }}</h5>
-        
-
+    </div>
+    
+    {% if not products %}
+    <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
+        <img src="{% static 'image/sedih-banget.png' %}" alt="Sad face" class="w-32 h-32 mb-4"/>
+        <p class="text-center text-gray-600 mt-4">Belum ada data produk pada aplikasi BizzSkin.</p>
+    </div>
+    {% else %}
+    <div class="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full">
+        {% for product in products %}
+            {% include 'card_product.html' with product=product %}
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
 {% endblock content %}

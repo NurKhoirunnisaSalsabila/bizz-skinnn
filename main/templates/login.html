@@ -1,32 +1,80 @@
 {% extends 'base.html' %}
+{% load static %}
+
+
 
 {% block meta %}
 <title>Login</title>
 {% endblock meta %}
 
 {% block content %}
-<div class="login">
-  <h1>Login</h1>
+<div class="min-h-screen flex flex-col lg:flex-row items-center justify-center bg-gray-100">
+  <!-- Background Image Section -->
+  <div class="hidden lg:block lg:w-1/2 bg-blue-500 relative">
+    <img src="{% static 'image/login-pbp.png' %}" alt="Login Image" class="object-cover h-full w-full">
+    <div class="absolute inset-0 bg-opacity-50 flex items-center justify-center">
+      <h1 class="text-white text-4xl font-extrabold">ELBOD2i</h1>
+    <div class="absolute inset-0 bg-opacity-50 flex items-center justify-center">
+      <h1 class="text-white text-4xl font-extrabold">ELBOD2i</h1>
+    </div>
+  </div>
 
-  <form method="POST" action="">
-    {% csrf_token %}
-    <table>
-      {{ form.as_table }}
-      <tr>
-        <td></td>
-        <td><input class="btn login_btn" type="submit" value="Login" /></td>
-      </tr>
-    </table>
-  </form>
+  <!-- Login Form Section -->
+  <div class="flex flex-col justify-center w-full lg:w-1/2 px-8 lg:px-24 py-12 bg-white">
+    <div class="space-y-8">
+      <h2 class="mt-6 text-center text-black text-3xl font-extrabold">
+        Login
+      </h2>
 
-  {% if messages %}
-  <ul>
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %} Don't have an account yet?
-  <a href="{% url 'main:register' %}">Register Now</a>
+      <!-- User Profile -->
+      <div class="flex items-center space-x-4 bg-gray-200 p-4 rounded-lg">
+        <img src="path_to_profile_image.jpg" alt="User Image" class="w-12 h-12 rounded-full">
+        <div>
+          <p class="font-bold text-gray-700">Welcome back to BizzSKin, Your Skin Helper!</p>
+          
+        </div>
+      </div>
+
+      <form class="space-y-6" method="POST" action="">
+        {% csrf_token %}
+        <div class="rounded-md shadow-sm">
+          <div class="mb-4">
+            <label for="username" class="sr-only">Username</label>
+            <input id="username" name="username" type="text" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Username">
+          </div>
+          <div>
+            <label for="password" class="sr-only">Password</label>
+            <input id="password" name="password" type="password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Password">
+          </div>
+        </div>
+
+        <div>
+          <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            Sign in
+          </button>
+        </div>
+      </form>
+
+      <!-- Additional messages section -->
+      {% if messages %}
+      <div class="mt-4">
+        {% for message in messages %}
+        <div class="alert {{ message.tags }} text-sm px-4 py-3 rounded relative">
+          <span class="block sm:inline">{{ message }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="text-center mt-4">
+        <p class="text-sm text-black">
+          Don't have an account yet?
+          <a href="{% url 'main:register' %}" class="font-medium text-indigo-600 hover:text-indigo-800">
+            Sign up
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
 </div>
-
 {% endblock content %}

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from main.forms import ProductForm
 from main.models import Product
 from django.http import HttpResponse, HttpResponseRedirect
@@ -20,7 +20,7 @@ def show_main(request):
         'name': request.user.username,
         'class': 'PBP A',
         'products': products,
-        'last_login': request.COOKIES['last_login'],
+        'last_login': request.COOKIES.get('last_login', 'Tidak Tersedia'),
     }
 
     return render(request, "main.html", context)
@@ -36,17 +36,6 @@ def create_product(request):
 
     context = {'form': form}
     return render(request, "create_product.html", context)
-# def create_product(request):
-#     form = ProductForm(request.POST or None)
-
-#     if form.is_valid() and request.method == "POST":
-#         form.save()
-#         return redirect('main:show_main')
-#     else:
-#         print(form.errors)
-
-#     context = {'form': form}
-#     return render(request, "create_product.html", context)
 
 def show_xml(request):
     data = Product.objects.all()
@@ -97,3 +86,26 @@ def logout_user(request):
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
+
+def edit_product(request, id):
+    # Get mood entry berdasarkan id
+    product = Product.objects.get(pk = id)
+
+    # Set mood entry sebagai instance dari form
+    form = ProductForm(request.POST or None, instance=product)
+
+    if form.is_valid() and request.method == "POST":
+        # Simpan form dan kembali ke halaman awal
+        form.save()
+        return HttpResponseRedirect(reverse('main:show_main'))
+
+    context = {'form': form}
+    return render(request, "edit_product.html", context)
+
+def delete_product(request, id):
+    # Get mood berdasarkan id
+    product = Product.objects.get(pk = id)
+    # Hapus mood
+    product.delete()
+    # Kembali ke halaman awal
+    return HttpResponseRedirect(reverse('main:show_main'))

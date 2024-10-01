@@ -5,4 +5,4 @@ class ProductForm(ModelForm):
     class Meta:
         model = Product
         fields = ["name", "price", "description"]
-    # ["name", "price", "description", "skin_type", "stock", "rating"
+    # ["name", "price", "description", "skin_type", "stock", "rating"]
