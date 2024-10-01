@@ -912,3 +912,298 @@ DEBUG = not PRODUCTION
 
 </details>
 
+
+<details>
+  <summary>TUGAS 5</summary>
+
+# **TUGAS 5**
+
+---
+
+## 1. **Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!**
+
+1. Inline Styles
+   * CSS yang ditulis langsung dalam atribut `style` pada elemen HTML memiliki tingkat prioritas tertinggi.
+   * Contoh:
+     ```html
+     <p style="color: pink;">This is a paragraph.</p>
+     ```
+     ```html
+     <div style="color: red;">This text is red.</div>
+     ```
+2.  ID Selectors:
+   * Styles yang didefinisikan menggunakan `#id`.
+   * Selector yang menggunakan ID lebih prioritas dibandingkan selector dengan class, atribut, atau type (tag).
+   * Contoh:
+     ```html
+     #header {
+        background-color: blue;
+      }
+     ```
+     ```html
+     <div id="header">This background is blue.</div>
+     ```
+     ```html
+     #myId {
+        color: blue;
+      }
+     ```
+     
+3. Class, Attribute, dan Pseudo-class Selectors:
+   * Class Selectors:
+     - Styles yang didefinisikan menggunakan `.class`.
+     - Prioritas: Class selectors memiliki prioritas lebih rendah dibandingkan ID selectors tetapi lebih tinggi daripada type selectors.
+     - Setara dengan Attribute dan Pseudo-class Selectors.
+     - Contoh:
+       ```html
+        .highlight {
+          color: yellow;
+        }
+        ```
+        ```html
+        <p class="highlight">This text is yellow.</p>
+        ```
+        
+    * Attribute Selectors:
+      - Definisi: Styles yang didefinisikan menggunakan `[attribute=value]`.
+      - Prioritas: Attribute selectors memiliki prioritas yang sama dengan class selectors.
+      - Contoh:
+        ```html
+        [type="text"] {
+          border: 1px solid black;
+        }
+        ```
+        ```html
+        <input type="text" />
+        ```
+    * Pseudo-classes:
+      - Definisi: Styles yang didefinisikan menggunakan `:pseudo-class`.
+      - Prioritas: Pseudo-classes memiliki prioritas yang sama dengan class selectors dan attribute selectors.
+      - Contoh:
+        ```html
+        a:hover {
+          color: green;
+        }
+        ```
+        ```html
+        <a href="#">Hover over me!</a>
+        ```
+4. Type Selectors dan Pseudo-element Selectors:
+   * Type Selectors:
+      - Definisi: Styles yang didefinisikan menggunakan nama elemen HTML.
+      - Prioritas: Type selectors memiliki prioritas lebih rendah dibandingkan class selectors, attribute, atau pseudo-class selectors.
+      - Contoh:
+         ```html
+        p {
+          font-size: 16px;
+        }
+        ```
+        ```html
+        <p>This text has a font size of 16px.</p>
+        ```
+    * Pseudo-element Selectors:
+      - Selector berdasarkan elemen HTML (tag) atau pseudo-elemen memiliki prioritas yang lebih rendah dibanding ID, class, atau atribut.
+      - Contoh:
+        ```html
+        p {
+          color: purple;
+        }
+        ::before {
+          content: "Prefix";
+        }
+        ```
+5. Universal Selectors:
+   - Styles yang didefinisikan menggunakan `*`.
+   - Universal selectors memiliki prioritas paling rendah di antara semua selector.
+   - Contoh:
+     ```html
+     * {
+        margin: 0;
+        padding: 0;
+      }
+     ```
+6. Browser Default Styles:
+   - Styles yang disediakan oleh browser secara default.
+   - Contoh: Default margin pada elemen `<body>`, default font pada elemen `<p>`.
+   - Prioritas: Browser default styles memiliki prioritas paling rendah dan akan ditimpa oleh semua jenis selector di atas.
+   
+7. Important Rule:
+   - Deklarasi yang menggunakan  `!important` akan mengesampingkan semua aturan lainnya, kecuali aturan lain yang juga menggunakan `!important`.
+   - Contoh:
+     ```python
+     p {
+        color: blue !important;
+      }
+     ```
+
+## 2. **Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design!**
+ * **Mengapa responsive design penting?**
+   1. Secara keseluruhan, responsive design adalah konsep penting karena memungkinkan tampilan website beradaptasi dengan baik pada berbagai ukuran layar, seperti desktop, tablet, dan mobile. Jika tidak menerapkan desain responsif, pengguna mungkin akan mengalami tampilan yang kurang optimal pada perangkat tertentu.
+   2. Pengalaman Pengguna (User Experience):
+      - Responsive design memastikan bahwa aplikasi web dapat diakses dan digunakan dengan nyaman di berbagai perangkat, termasuk desktop, tablet, dan ponsel, sehingga meningkatkan kepuasan pengguna karena mereka dapat mengakses konten dengan mudah tanpa harus melakukan zoom in atau scroll horizontal.
+      - Contoh: Situs web yang responsif akan menyesuaikan tata letak, ukuran teks, dan elemen lainnya agar sesuai dengan ukuran layar perangkat yang digunakan.
+    3. SEO (Search Engine Optimization)
+       - Search engine seperti Google memberikan peringkat lebih tinggi pada situs web yang responsif. Hal ini karena situs web yang responsif cenderung memberikan pengalaman pengguna yang lebih baik, yang merupakan faktor penting dalam algoritma peringkat mesin pencari.
+       - Contoh: Situs web yang responsif lebih mungkin muncul di halaman pertama hasil pencarian Google dibandingkan dengan situs web yang tidak responsif.
+    4. Aksesibilitas
+       - Dengan responsive design, konten web dapat diakses oleh lebih banyak orang, termasuk mereka yang menggunakan perangkat dengan berbagai ukuran layar dan resolusi. Sehingga, memastikan bahwa semua pengguna, terlepas dari perangkat yang mereka gunakan, dapat mengakses informasi dengan mudah.
+       - Contoh: Situs web yang responsif akan menyesuaikan ukuran tombol dan teks agar mudah diakses oleh pengguna dengan kebutuhan khusus.
+    5. Efisiensi Pengembangan dan Pemeliharaan
+       - Dengan menggunakan responsive design, pengembang hanya perlu membuat satu versi situs web yang dapat berfungsi di berbagai perangkat, sehingga mengurangi waktu dan biaya yang diperlukan untuk mengembangkan dan memelihara beberapa versi situs web.
+       - Contoh: Daripada membuat situs web terpisah untuk desktop dan mobile, pengembang dapat menggunakan responsive design untuk membuat satu situs web yang berfungsi di semua perangkat.
+
+ * **Contoh Aplikasi yang sudah Menerapkan Responsive Design**
+1. Twitter
+2. Github
+3. SIAKNG
+
+## 3. **Perbedaan Margin, Border, dan Padding, serta cara mengimplementasikan ketiganya**
+1. Margin
+   * Margin adalah ruang di luar border elemen. Margin digunakan untuk memberikan jarak antara elemen dengan elemen lainnya.
+   * Contoh Implementasi:
+     ```html
+     .element {
+        margin: 20px; /* Memberikan jarak 20px di semua sisi elemen */
+      }
+     ```
+2. Border
+   * Border adalah garis yang mengelilingi padding dan konten elemen. Border dapat memiliki warna, ketebalan, dan gaya yang berbeda.
+   * Digunakan untuk memberikan batas visual pada elemen, sehingga elemen tersebut lebih menonjol atau terpisah dari elemen lain. 
+   * Contoh Implementasi:
+     ```html
+     .element {
+        border: 2px solid black; /* Memberikan border hitam dengan ketebalan 2px di semua sisi elemen */
+      }
+     ```
+3. Padding
+   *  Padding adalah ruang di dalam border, antara border dan konten elemen. Padding digunakan untuk memberikan jarak antara konten elemen dengan border elemen.
+   *  Padding tidak memiliki warna atau gaya, hanya ruang kosong.
+   *  Contoh Implementasi:
+     ```html
+     .element {
+        padding: 15px; /* Memberikan jarak 15px di semua sisi konten elemen */
+      }
+     ```
+
+### Contoh Implementasi dalam HTML dan CSS
+Misalkan kita memiliki elemen HTML berikut:
+```html
+<div class="box">
+  Konten di dalam kotak
+</div>
+```
+Kita dapat mengimplementasikan margin, border, dan padding menggunakan CSS sebagai berikut:
+```html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Margin, Border, and Padding Example</title>
+  <style>
+    .box {
+      margin: 20px; /* Memberikan jarak 20px di luar border elemen */
+      border: 2px solid black; /* Memberikan border hitam dengan ketebalan 2px di semua sisi elemen */
+      padding: 15px; /* Memberikan jarak 15px di dalam border, antara border dan konten elemen */
+      background-color: lightblue; /* Memberikan warna latar belakang untuk visualisasi */
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    Konten di dalam kotak
+  </div>
+</body>
+</html>
+
+```
+
+## 4. **Jelaskan konsep flex box dan grid layout beserta kegunaannya!**
+
+1. Flexbox
+   * Flexbox (Flexible Box Layout) adalah model layout CSS yang dirancang untuk mengatur elemen dalam satu dimensi (baris atau kolom). Flexbox sangat berguna untuk membuat layout yang fleksibel dan responsif.
+   * Kegunaan Flexbox:
+     - Alignment: Mengatur alignment elemen secara horizontal dan vertikal dengan mudah.
+     - Order: Mengubah urutan elemen tanpa mengubah struktur HTML.
+     - Spacing: Mengatur jarak antar elemen secara dinamis.
+     - Responsiveness: Membuat layout yang responsif dengan sedikit kode.
+  * Contoh Implementasi Flexbox:
+    ```html
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Flexbox Example</title>
+      <style>
+        .container {
+          display: flex;
+          justify-content: center; /* Mengatur elemen di tengah secara horizontal */
+          align-items: center; /* Mengatur elemen di tengah secara vertikal */
+          height: 100vh;
+        }
+        .item {
+          background-color: lightblue;
+          padding: 20px;
+          margin: 10px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <div class="item">Item 3</div>
+      </div>
+    </body>
+    </html>
+    ```
+2. Grid Layout
+   * Grid Layout adalah model layout CSS yang dirancang untuk mengatur elemen dalam dua dimensi (baris dan kolom). Grid layout sangat berguna untuk membuat layout yang kompleks dan responsif dengan mudah.
+   * Kegunaan Grid Layout:
+     - Complex Layouts: Membuat layout yang kompleks dengan baris dan kolom.
+     - Alignment: Mengatur alignment elemen dalam grid dengan mudah. Mengatur alignment elemen dalam grid dengan properti `align-items` dan `justify-items`.
+     - Responsiveness: Membuat layout yang responsif dengan mendefinisikan grid yang fleksibel.
+     - Gap Control: Mengatur jarak antar elemen dalam grid dengan properti  `grid-gap`.
+    * Contoh Implementasi Grid Layout:
+      ```html
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Grid Layout Example</title>
+        <style>
+          .container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Membuat 3 kolom dengan lebar yang sama */
+            grid-gap: 20px; /* Mengatur jarak antar elemen dalam grid */
+            padding: 20px;
+          }
+          .item {
+            background-color: lightgreen;
+            padding: 20px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="item">Item 1</div>
+          <div class="item">Item 2</div>
+          <div class="item">Item 3</div>
+          <div class="item">Item 4</div>
+          <div class="item">Item 5</div>
+          <div class="item">Item 6</div>
+        </div>
+      </body>
+      </html>
+      ```
+### **Kesimpulan**
+Flexbox dan Grid Layout adalah dua model layout CSS yang sangat berguna untuk membuat layout yang fleksibel, responsif, dan kompleks. Flexbox lebih cocok untuk mengatur elemen dalam satu dimensi, sementara Grid Layout lebih cocok untuk mengatur elemen dalam dua dimensi. Dengan memahami dan menggunakan kedua model layout ini, pengembang dapat membuat desain web yang lebih baik dan lebih responsif.
+
+## 5. **Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!**
+
+1. 
+
+</details>
