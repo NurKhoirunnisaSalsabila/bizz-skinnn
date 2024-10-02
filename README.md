@@ -1054,8 +1054,18 @@ DEBUG = not PRODUCTION
 
  * **Contoh Aplikasi yang sudah Menerapkan Responsive Design**
 1. Twitter
-2. Github
-3. SIAKNG
+   ![image](https://github.com/user-attachments/assets/886ee7a2-243f-4e7c-a78d-fc466a2bd627)
+   ![image](https://github.com/user-attachments/assets/fe995f26-251d-4d36-ad4c-9a3dc3b19b4d)
+3. Github
+   ![image](https://github.com/user-attachments/assets/48ea7b91-71c8-4b12-8bb8-c278052ac934)
+   ![image](https://github.com/user-attachments/assets/28ff8a2e-0876-4133-aba8-e2f7b05cbd8e)
+4. SIAKNG
+   ![image](https://github.com/user-attachments/assets/527544a3-d7e0-442d-aa88-eeac91a41b67)
+   ![image](https://github.com/user-attachments/assets/753df1bc-06d6-4af9-a98f-3ca91337fa0c)
+5. BizzSkin!
+   ![image](https://github.com/user-attachments/assets/26e5c55e-2551-4c83-b863-1e535703e314)
+   ![image](https://github.com/user-attachments/assets/4125e6a9-cc9b-4a7f-abca-b472cb719349)
+
 
 ## 3. **Perbedaan Margin, Border, dan Padding, serta cara mengimplementasikan ketiganya**
 1. Margin
