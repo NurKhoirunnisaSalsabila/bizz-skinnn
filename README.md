@@ -1059,7 +1059,7 @@ DEBUG = not PRODUCTION
 
 ## 3. **Perbedaan Margin, Border, dan Padding, serta cara mengimplementasikan ketiganya**
 1. Margin
-   * Margin adalah ruang di luar border elemen. Margin digunakan untuk memberikan jarak antara elemen dengan elemen lainnya.
+   * Margin adalah ruang di luar border elemen. Margin digunakan untuk memberikan jarak antara elemen dengan elemen lainnya (mengosongkan area di sekitar border (transparan)).
    * Contoh Implementasi:
      ```html
      .element {
@@ -1067,7 +1067,7 @@ DEBUG = not PRODUCTION
       }
      ```
 2. Border
-   * Border adalah garis yang mengelilingi padding dan konten elemen. Border dapat memiliki warna, ketebalan, dan gaya yang berbeda.
+   * Border adalah garis yang mengelilingi padding dan konten elemen. Border dapat memiliki warna, ketebalan, dan gaya yang berbeda (garis tepian yang membungkus konten dan padding-nya).
    * Digunakan untuk memberikan batas visual pada elemen, sehingga elemen tersebut lebih menonjol atau terpisah dari elemen lain. 
    * Contoh Implementasi:
      ```html
@@ -1077,7 +1077,7 @@ DEBUG = not PRODUCTION
      ```
 3. Padding
    *  Padding adalah ruang di dalam border, antara border dan konten elemen. Padding digunakan untuk memberikan jarak antara konten elemen dengan border elemen.
-   *  Padding tidak memiliki warna atau gaya, hanya ruang kosong.
+   *  Padding tidak memiliki warna atau gaya, hanya ruang kosong. (Padding gunanya untuk mengosongkan area di sekitar konten (transparan))
    *  Contoh Implementasi:
      ```html
      .element {
@@ -1204,6 +1204,516 @@ Flexbox dan Grid Layout adalah dua model layout CSS yang sangat berguna untuk me
 
 ## 5. **Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!**
 
-1. 
+1. **Menambahkan Tailwind ke Aplikasi**
+   * Buka file `base.html` yang telah dibuat sebelumnya pada templates folder yang berada di root project.
+   * Tambahkan tag `<meta name="viewport">` agar halaman web kamu dapat menyesuaikan ukuran dan perilaku perangkat mobile.
+     ```html
+      <head>
+          {% block meta %}
+              <meta charset="UTF-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+          {% endblock meta %}
+      </head>
+     ```
+     * Tambahkan script CDN (Content Delivery Network) dari Tailwind untuk diletakkan di dalam html template Django, tepatnya di bagian head file `base.html`, gunanya untuk menyambungkan template django dengan tailwind.
+       ```html
+       <head>
+        {% block meta %}
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% endblock meta %}
+        <script src="https://cdn.tailwindcss.com">
+        </script>
+        </head>
+       ```
+2. **Menambahkan Fitur Edit Product pada Aplikasi**
+   * Tambahkan fungsi baru di `views.py` yang ada pada subdirektori `main`, fungsi baru tersebut bernama `edit_product` yang menerima parameter `request` dan `id`.
+     ```html
+       def edit_product(request, id):
+          # Get product entry berdasarkan id
+          product = Product.objects.get(pk = id)
+      
+          # Set product entry sebagai instance dari form
+          form = ProductForm(request.POST or None, instance=product)
+      
+          if form.is_valid() and request.method == "POST":
+              # Simpan form dan kembali ke halaman awal
+              form.save()
+              return HttpResponseRedirect(reverse('main:show_main'))
+      
+          context = {'form': form}
+          return render(request, "edit_product.html", context)
 
+     ```
+     * Tambahkan import `reverse` pada file `views.py`.
+     * Membuat berkas HTML baru dengan nama `edit_product.html` pada subdirektori `main/templates`.
+       ```html
+        {% extends 'base.html' %}
+        {% load static %}
+        {% block meta %}
+        <title>Edit Product</title>
+        {% endblock meta %}
+        
+        {% block content %}
+        {% include 'navbar.html' %}
+        
+        <div class="flex flex-col min-h-screen bg-cover bg-center" style="background-image: url('{% static 'image/landing-page.png' %}');">
+          <div class="container mx-auto px-4 py-8 mt-16 max-w-xl bg-white bg-opacity-90 rounded-2xl shadow-lg">
+            <h1 class="text-3xl font-bold text-center mb-8 text-maroon-700 font-cursive">Edit Product</h1>
+          
+            <div class="bg-white rounded-2xl p-6 shadow-lg">
+              <form method="POST" class="space-y-6">
+                  {% csrf_token %}
+                  {% for field in form %}
+                      <div class="flex flex-col">
+                          <label for="{{ field.id_for_label }}" class="mb-2 font-semibold text-gray-700">
+                              {{ field.label }}
+                          </label>
+                          <div class="w-full">
+                              {{ field }}
+                          </div>
+                          {% if field.help_text %}
+                              <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
+                          {% endif %}
+                          {% for error in field.errors %}
+                              <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                          {% endfor %}
+                      </div>
+                  {% endfor %}
+                  <div class="flex justify-center mt-6">
+                      <button type="submit" class="bg-[#800000] text-white font-semibold px-6 py-3 rounded-lg hover:bg-maroon-700 transition duration-300 ease-in-out w-full">
+                          Edit Product
+                      </button>
+                  </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+          .font-cursive {
+            font-family: 'Pacifico', cursive;
+          }
+        
+          @media (min-width: 768px) {
+            .grid-cols-1 {
+              grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+          }
+        
+          @media (min-width: 1024px) {
+            .grid-cols-1 {
+              grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+          }
+        </style>
+        {% endblock content %}
+
+       ```
+     * Buka `urls.py` yang berada pada direktori `main` dan import fungsi `edit_product` yang sudah dibuat.
+       ```
+       from main.views import edit_product
+       ```
+     * Lakukan routing url ke dalam `urlpatterns` untuk mengakses fungsi yang sudah diimpor tadi.
+       ```
+       path('edit-product/<uuid:id>', edit_product, name='edit_product'),
+       ```
+     * Buka `card_product.html` yang berada pada subdirektori `main/templates`. Tambahkan potongan kode berikut sejajar dengan elemen `<td>` terakhir agar terlihat tombol `edit` pada setiap baris tabel.
+       ```html
+        <!-- Actions -->
+        <div class="mt-4 flex justify-end space-x-3">
+            <a href="{% url 'main:edit_product' product.pk %}" class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-lg transition duration-300">
+                EDIT
+            </a>
+            ...
+        </div>
+       ```
+     
+3. **Menambahkan Fitur Delete Product pada Aplikasi**
+ * Tambahkan fungsi baru di `views.py` yang ada pada subdirektori `main`, fungsi baru tersebut bernama `delete_product` yang menerima parameter `request` dan `id`.
+     ```html
+     def delete_product(request, id):
+        # Get product berdasarkan id
+        product = Product.objects.get(pk = id)
+        # Hapus product
+        product.delete()
+        # Kembali ke halaman awal
+        return HttpResponseRedirect(reverse('main:show_main'))
+    ```
+  * Buka `urls.py` yang berada pada direktori `main` dan import fungsi `delete_product` yang sudah dibuat.
+       ```
+       from main.views import delete_product
+       ```
+  * Lakukan routing url ke dalam `urlpatterns` untuk mengakses fungsi yang sudah diimpor tadi.
+       ```
+       path('delete-product/<uuid:id>', delete_product, name='delete_product'),
+       ```
+  * Buka `card_product.html` yang berada pada subdirektori `main/templates`. Tambahkan potongan kode berikut sejajar dengan elemen `<td>` terakhir agar terlihat tombol `delete` pada setiap baris tabel.
+       ```html
+       ...
+           <div class="mt-4 flex justify-end space-x-3">
+            <a href="{% url 'main:edit_product' product.pk %}" class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-lg transition duration-300">
+                EDIT
+            </a>
+            <a href="{% url 'main:delete_product' product.pk %}" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition duration-300">
+                DELETE
+            </a>
+        </div>
+       ...
+      ```
+
+4. **Menambahkan Navigation Bar pada Aplikasi**
+   * Buatlah berkas HTML baru dengan nama `navbar.html` pada folder `templates/` di root directory.
+     ```html
+     {% load static %}
+      <nav class="bg-[#800000] shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between h-16">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <a href="#">
+                  <img class="h-8 w-8" src="{% static 'image/bizzskin-logo.png' %}" alt="Logo">
+                </a>
+                <span class="text-white font-bold ml-2">BizzSkin</span>
+              </div>
+              <div class="hidden md:ml-6 md:flex md:space-x-8">
+                <a href="#" class="text-white hover:text-gray-200 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-gray-200 text-sm font-medium">Home</a>
+                <a href="#" class="text-white hover:text-gray-200 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-gray-200 text-sm font-medium">Products</a>
+                <a href="#" class="text-white hover:text-gray-200 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-gray-200 text-sm font-medium">Categories</a>
+                <a href="#" class="text-white hover:text-gray-200 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-gray-200 text-sm font-medium">Cart</a>
+              </div>
+            </div>
+            <div class="hidden md:ml-6 md:flex md:items-center">
+              <span class="text-white text-sm font-medium mr-4">Welcome, {{ user.username }}!</span>
+              <a href="{% url 'main:logout' %}" class="text-white hover:text-gray-200 border border-white hover:bg-gray-200 hover:text-[#800000] text-sm font-bold py-2 px-4 rounded transition duration-300">
+                Logout
+              </a>
+            </div>
+            <div class="-mr-2 flex items-center md:hidden">
+              <button class="mobile-menu-button inline-flex items-center justify-center p-2 rounded-md text-white hover:text-gray-200 hover:bg-gray-200 focus:outline-none focus:bg-gray-200 focus:text-[#800000]">
+                <svg class="w-6 h-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      
+        <!-- Mobile Menu -->
+        <div class="mobile-menu hidden md:hidden px-4 w-full bg-[#800000]">
+          <div class="py-2 space-y-1">
+            <a href="#" class="block text-white hover:text-gray-200 py-2">Home</a>
+            <a href="#" class="block text-white hover:text-gray-200 py-2">Products</a>
+            <a href="#" class="block text-white hover:text-gray-200 py-2">Categories</a>
+            <a href="#" class="block text-white hover:text-gray-200 py-2">Cart</a>
+      
+            <!-- Welcome Message and Logout Button for Mobile -->
+            <div class="block text-center text-white font-medium py-2">Welcome, {{ user.username }}!</div>
+            <a href="{% url 'main:logout' %}" class="block text-center border border-white hover:bg-gray-200 hover:text-[#800000] text-white font-bold py-2 px-4 rounded transition duration-300 mt-2">
+              Logout
+            </a>
+          </div>
+        </div>
+      </nav>
+      
+      <script>
+      const btn = document.querySelector("button.mobile-menu-button");
+      const menu = document.querySelector(".mobile-menu");
+      
+      btn.addEventListener("click", () => {
+        menu.classList.toggle("hidden");
+      });
+      </script>
+     ```
+  * Kemudian, tautkan navbar tersebut ke dalam `main.html`, `create_product.html`, dan `edit_product.html` yang berada di subdirektori `main/templates/` dengan menggunakan tags `include:`
+    ```
+    {% include 'navbar.html' %}
+    ```
+
+5. **Konfigurasi Static Files pada Aplikasi**
+   * Pada `settings.py`, tambahkan middleware WhiteNoise.
+   ```
+     ...
+    MIDDLEWARE = [
+        'django.middleware.security.SecurityMiddleware',
+        'whitenoise.middleware.WhiteNoiseMiddleware', #Tambahkan tepat di bawah SecurityMiddleware
+        ...
+    ]
+    ...
+   ```
+    * Pada `settings.py`, pastikan variabel `STATIC_ROOT`, `STATICFILES_DIRS`, dan `STATIC_URL` dikonfigurasikan seperti ini:
+      ```
+      ...
+      STATIC_URL = '/static/'
+      if DEBUG:
+          STATICFILES_DIRS = [
+              BASE_DIR / 'static' # merujuk ke /static root project pada mode development
+          ]
+      else:
+          STATIC_ROOT = BASE_DIR / 'static' # merujuk ke /static root project pada mode production
+      ...
+      ```
+6. **Menambahkan Styles pada Aplikasi dengan Tailwind dan External CSS**
+   * Tambahkan `global.css`
+     - Buatlah file `global.css` di `/static/css` pada root directory.
+     -  Pada file global.css ini isi dengan kode berikut untuk custom styling:
+       ```css
+             .form-style form input, form textarea, form select {
+          width: 100%;
+          padding: 0.5rem;
+          border: 2px solid #bcbcbc;
+          border-radius: 0.375rem;
+      }
+      .form-style form input:focus, form textarea:focus, form select:focus {
+          outline: none;
+          border-color: #674ea7;
+          box-shadow: 0 0 0 3px #674ea7;
+      }
+      @keyframes shine {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+      }
+      .animate-shine {
+          background: linear-gradient(120deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.3));
+          background-size: 200% 100%;
+          animation: shine 3s infinite;
+      }
+      ```
+   * Hubungkan `global.css` dan script Tailwind ke `base.html`.
+     - Agar style CSS yang ditambahkan di `global.css` dapat digunakan dalam template Django, kamu perlu menambahkan file tersebut ke `base.html`. Modifikasi file `base.html` seperti berikut:
+       ```html
+       {% load static %}
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            {% block meta %} {% endblock meta %}
+            <script src="https://cdn.tailwindcss.com"></script>
+            <link rel="stylesheet" href="{% static 'css/global.css' %}"/>
+          </head>
+          <body>
+            {% block content %} {% endblock content %}
+          </body>
+        </html>
+       ```
+       
+   * Menambahkan styling di page lainnya:
+     
+     - login.html
+     - register.html
+     - main.html
+     - navbar.html
+     - footer.html
+     - card_product.html
+     - add_product.html
+     - edit_product.html
+
+
+7. **Menambahkan Footer**
+   - Membuat `footer.html` di folder main/templates:
+     ```html
+           {% load static %}
+      
+      <footer class="bg-[#800000] text-white py-6 sm:py-8 md:py-10 text-xs sm:text-sm md:text-base">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex flex-col space-y-4 sm:space-y-6 md:space-y-8">
+      
+            <!-- Logo -->
+            <div class="flex justify-start">
+              <img src="{% static 'image/bizzskin-logo.png' %}" alt="glowify logo" class="h-4 sm:h-5 md:h-6">
+            </div>
+      
+            <!-- Divider -->
+            <div class="w-full border-t border-white"></div>
+      
+            <!-- Links and Copyright -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full space-y-2 sm:space-y-0">
+      
+              <!-- Copyright -->
+              <div class="text-left">
+                <p class="text-xs sm:text-sm md:text-base">&copy; 2024, chachamarica.</p>
+              </div>
+      
+              <!-- Links -->
+              <div class="flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-3 md:space-x-4 text-left sm:text-right">
+                <a href="#" class="hover:underline text-xs sm:text-sm md:text-base">Privacy Policy</a>
+                <a href="#" class="hover:underline text-xs sm:text-sm md:text-base">Terms of Service</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+     ```
+8. **Menambahkan Card untuk Produk dan Card Info**
+   * Membuat `card_product.html` di folder main/templates:
+     ```html
+     {% load humanize %}
+
+      <div class="bg-white p-4 sm:p-6 md:p-8 rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300">
+          <!-- Product Details -->
+          <div class="text-left">
+              <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 mb-2">{{ product.name }}</h3>
+              <p class="text-sm sm:text-base md:text-lg text-gray-600 mb-4">{{ product.description }}</p>
+              <p class="text-xl sm:text-2xl md:text-3xl font-bold text-indigo-600 mb-2">Rp{{ product.price|intcomma }}</p>
+              <p class="text-sm sm:text-base md:text-lg text-gray-500">Skin Type: {{ product.skin_type }}</p>
+          </div>
+      
+          <!-- Actions -->
+          <div class="mt-4 flex justify-end space-x-3">
+              <a href="{% url 'main:edit_product' product.pk %}" class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-lg transition duration-300">
+                  EDIT
+              </a>
+              <a href="{% url 'main:delete_product' product.pk %}" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition duration-300">
+                  DELETE
+              </a>
+          </div>
+      </div>
+     ```
+     * Membuat `card_info.html` di folder main/templates:
+       ```html
+       <!-- <div class="bg-indigo-700 rounded-xl overflow-hidden border-2 border-indigo-800">
+            <div class="p-4 animate-shine">
+              <h5 class="text-lg font-semibold text-gray-200">{{ title }}</h5>
+              <p class="text-white">{{ value }}</p>
+            </div>
+        </div> -->
+        
+        <div class="bg-pink-100 rounded-xl overflow-hidden border-2 border-maroon-800 shadow-lg transform transition duration-300 hover:scale-105">
+          <div class="p-6">
+            <h5 class="text-lg font-semibold text-maroon-700">{{ title }}</h5>
+            <p class="text-maroon-600">{{ value }}</p>
+          </div>
+        </div>
+       ```
+
+9. **Menambahkan Halaman Register**
+   * Membuat `register.html` di folder templates:
+     ```html
+     {% extends 'base.html' %}
+      {% load static %}
+      
+      {% block meta %}
+      <title>Register</title>
+      {% endblock meta %}
+      
+      {% block content %}
+      <div class="min-h-screen flex items-center justify-center bg-pink-100 py-12 px-4 sm:px-6 lg:px-8" style="background-image: url('{% static 'image/background-pattern.png' %}'); background-size: cover; background-position: center;">
+        <div class="max-w-md w-full space-y-8 form-style bg-white p-8 rounded-lg shadow-lg">
+          <div>
+            <h2 class="mt-6 text-center text-3xl font-extrabold" style="color: #800000;">
+              Create your account
+            </h2>
+          </div>
+          <form class="mt-8 space-y-6" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="remember" value="true">
+            <div class="rounded-md shadow-sm -space-y-px">
+              {% for field in form %}
+                <div class="{% if not forloop.first %}mt-4{% endif %}">
+                  <label for="{{ field.id_for_label }}" class="mb-2 font-semibold" style="color: #800000;">
+                    {{ field.label }}
+                  </label>
+                  <div class="relative">
+                    {{ field }}
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                      {% if field.errors %}
+                        <svg class="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                      {% endif %}
+                    </div>
+                  </div>
+                  {% if field.errors %}
+                    {% for error in field.errors %}
+                      <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+            <div>
+              <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-maroon-600 hover:bg-maroon-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-maroon-500" style="background-color: #800000;">
+                Register
+              </button>
+            </div>
+            <div class="text-center mt-4">
+              <p class="text-sm" style="color: #800000;">
+                Already have an account?
+                <a href="{% url 'main:login' %}" class="font-bold hover:opacity-80" style="color: #800000;">Login here</a>
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+      {% endblock content %}
+
+   
+10. **Menambahkan Halaman Tambah Produk**
+    * Membuat `create_product.html` di folder main/templates:
+    ```html
+    {% extends 'base.html' %}
+    {% load static %}
+    {% block meta %}
+    <title>Create Product</title>
+    {% endblock meta %}
+    
+    {% block content %}
+    {% include 'navbar.html' %}
+    
+    <div class="flex flex-col min-h-screen bg-cover bg-center" style="background-image: url('{% static 'image/landing-page.png' %}');">
+      <div class="container mx-auto px-4 py-8 mt-16 max-w-xl bg-white bg-opacity-90 rounded-2xl shadow-lg">
+        <h1 class="text-3xl font-bold text-center mb-8 text-maroon-700 font-cursive">Create Product</h1>
+      
+        <div class="bg-white shadow-md rounded-lg p-6 form-style">
+          <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="flex flex-col">
+                <label for="{{ field.id_for_label }}" class="mb-2 font-semibold text-gray-700">
+                  {{ field.label }}
+                </label>
+                <div class="w-full">
+                  {{ field }}
+                </div>
+                {% if field.help_text %}
+                  <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
+                {% endif %}
+                {% for error in field.errors %}
+                  <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endfor %}
+            <div class="flex justify-center mt-6">
+              <button type="submit" class="bg-[#800000] text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 transition duration-300 ease-in-out w-full">
+                Create Product
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+      .font-cursive {
+        font-family: 'Pacifico', cursive;
+      }
+    
+      @media (min-width: 768px) {
+        .grid-cols-1 {
+          grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+      }
+    
+      @media (min-width: 1024px) {
+        .grid-cols-1 {
+          grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+      }
+    </style>
+    {% endblock content %}
+    ```
+11. **Melakukan add, commit, dan push ke github dan pws**
 </details>
