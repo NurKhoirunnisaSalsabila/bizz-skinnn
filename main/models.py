@@ -12,9 +12,12 @@ class Product(models.Model):
     skin_type = models.CharField(max_length=50)
     # image = models.ImageField(upload_to='product_images/', blank=True, null=True)
 
+    
     def clean(self):
         if self.price <= 0:
             raise ValidationError('Price must be greater than 0')
         
     def __str__(self):
         return self.name
+    
+
