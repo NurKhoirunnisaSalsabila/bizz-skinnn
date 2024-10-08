@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
-# from django.http import JsonResponse
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -97,10 +97,10 @@ def logout_user(request):
     return response
 
 def edit_product(request, id):
-    # Get mood entry berdasarkan id
+    
     product = Product.objects.get(pk = id)
 
-    # Set mood entry sebagai instance dari form
+   
     form = ProductForm(request.POST or None, instance=product)
 
     if form.is_valid() and request.method == "POST":
@@ -112,11 +112,11 @@ def edit_product(request, id):
     return render(request, "edit_product.html", context)
 
 def delete_product(request, id):
-    # Get mood berdasarkan id
+ 
     product = Product.objects.get(pk = id)
-    # Hapus mood
+
     product.delete()
-    # Kembali ke halaman awal
+
     return HttpResponseRedirect(reverse('main:show_main'))
 
 # New function to add product via AJAX
@@ -128,16 +128,16 @@ def create_product_ajax(request):
         product = form.save(commit=False)
         product.user = request.user
         product.save()
-        return HttpResponse(b"CREATED", status=201)
-        #     "message": "Product created successfully",
-        #     "product": {
-        #         "id": str(product.id),
-        #         "name": product.name,
-        #         "price": product.price,
-        #         "description": product.description,
-        #         "skin_type": product.skin_type,                 
-        #     }
-        # }
+        return JsonResponse({
+            "message": "Product created successfully",
+            "product": {
+                "id": str(product.id),
+                "name": product.name,
+                "price": product.price,
+                "description": product.description,
+                "skin_type": product.skin_type,                 
+            }
+        }, status=201)
         
     else:
-        return HttpResponse({"errors": form.errors}, status=400)
+        return JsonResponse({"errors": form.errors}, status=400)
