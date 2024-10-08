@@ -29,6 +29,14 @@
     <!-- Login Form -->
     <form method="POST" action="{% url 'main:login' %}" class="w-full max-w-xs sm:max-w-sm">
       {% csrf_token %}
+      
+      <!-- Display form errors here -->
+      {% if form.errors %}
+        <div class="text-red-500 text-xs mt-1">
+          {{ form.errors }}
+        </div>
+      {% endif %}
+      
       <div class="mb-3 sm:mb-4">
         <label for="id_username" class="block text-gold-600 text-xs sm:text-sm md:text-base mb-1 sm:mb-2">Username</label>
         <input id="id_username" name="username" type="text" required class="appearance-none rounded-md relative block w-full px-2 sm:px-3 py-1 sm:py-2 md:py-3 border placeholder-pink-400 text-gray-900 focus:outline-none focus:ring-gold-600 focus:border-gold-600 focus:z-10 text-xs sm:text-sm md:text-base bg-pink-50" placeholder="Enter your username">

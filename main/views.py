@@ -12,6 +12,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
+from django.http import JsonResponse
 
 # Create your views here.
 @login_required(login_url='/login')
@@ -120,18 +121,21 @@ def delete_product(request, id):
 # New function to add product via AJAX
 @csrf_exempt
 @require_POST
-def add_product_ajax(request):
-    name = strip_tags(request.POST.get("name"))
-    description = strip_tags(request.POST.get("description"))
-    price = request.POST.get("price")
-    skin_type = strip_tags(request.POST.get("skin_type"))
-    user = request.user
-
-    new_product = Product(
-        name=name, description=description,
-        price=price, skin_type=skin_type,
-        user=user, 
-    )
-    new_product.save()
-
-    return HttpResponse(b"CREATED", status=201)
+def create_product_ajax(request):
+    form = ProductForm(request.POST, request.FILES)
+    if form.is_valid():
+        product = form.save(commit=False)
+        product.user = request.user
+        product.save()
+        return JsonResponse({
+            "message": "Product created successfully",
+            "product": {
+                "id": str(product.id),
+                "name": product.name,
+                "price": product.price,
+                "description": product.description,
+                "skin_type": product.skin_type,                 
+            }
+        }, status=201)
+    else:
+        return JsonResponse({"errors": form.errors}, status=400)
