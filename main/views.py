@@ -12,7 +12,8 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
-from django.http import JsonResponse
+# from django.http import JsonResponse
+
 
 # Create your views here.
 @login_required(login_url='/login')
@@ -127,15 +128,16 @@ def create_product_ajax(request):
         product = form.save(commit=False)
         product.user = request.user
         product.save()
-        return JsonResponse({
-            "message": "Product created successfully",
-            "product": {
-                "id": str(product.id),
-                "name": product.name,
-                "price": product.price,
-                "description": product.description,
-                "skin_type": product.skin_type,                 
-            }
-        }, status=201)
+        return HttpResponse(b"CREATED", status=201)
+        #     "message": "Product created successfully",
+        #     "product": {
+        #         "id": str(product.id),
+        #         "name": product.name,
+        #         "price": product.price,
+        #         "description": product.description,
+        #         "skin_type": product.skin_type,                 
+        #     }
+        # }
+        
     else:
-        return JsonResponse({"errors": form.errors}, status=400)
+        return HttpResponse({"errors": form.errors}, status=400)
