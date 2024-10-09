@@ -119,7 +119,7 @@ def delete_product(request, id):
 
     return HttpResponseRedirect(reverse('main:show_main'))
 
-# New function to add product via AJAX
+# New function to add product by AJAX
 @csrf_exempt
 @require_POST
 def create_product_ajax(request):
