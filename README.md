@@ -1532,7 +1532,7 @@ Flexbox dan Grid Layout adalah dua model layout CSS yang sangat berguna untuk me
       
             <!-- Logo -->
             <div class="flex justify-start">
-              <img src="{% static 'image/bizzskin-logo.png' %}" alt="glowify logo" class="h-4 sm:h-5 md:h-6">
+              <img src="{% static 'image/bizzskin-logo.png' %}" alt="bizzskin-logo" class="h-4 sm:h-5 md:h-6">
             </div>
       
             <!-- Divider -->
@@ -1726,4 +1726,420 @@ Flexbox dan Grid Layout adalah dua model layout CSS yang sangat berguna untuk me
     {% endblock content %}
     ```
 11. **Melakukan add, commit, dan push ke github dan pws**
+</details>
+
+
+
+<details>
+  <summary>TUGAS 6</summary>
+
+## 1. **Manfaat Penggunaan JavaScript dalam Pengembangan Aplikasi Web**
+1. **Interaktivitas:** JavaScript memungkinkan pengembang untuk membuat halaman web yang interaktif dan responsif, seperti animasi, validasi form, dan manipulasi DOM.
+2. **Pengalaman Pengguna yang Lebih Baik (Responsif dan Dinamis):** Dengan JavaScript, pengguna dapat berinteraksi dengan halaman web tanpa perlu memuat ulang halaman, memberikan pengalaman yang lebih mulus.
+3. **Pengembangan Aplikasi Web Modern dan Kompatibilitas:** JavaScript adalah dasar dari banyak framework dan library modern seperti React, Angular, dan Vue.js, yang memudahkan pengembangan aplikasi web yang kompleks. JavaScript dapat digunakan dengan HTML dan CSS, dan hampir semua browser modern mendukung JavaScript, sehingga mudah untuk mengintegrasikannya dalam berbagai proyek web.
+4. **Komunikasi Asinkron:** JavaScript memungkinkan komunikasi asinkron dengan server menggunakan AJAX, yang memungkinkan pembaruan data tanpa memuat ulang halaman.
+5. **Cross-Platform:** JavaScript dapat berjalan pada hampir semua platform dan perangkat, sehingga aplikasi web yang dikembangkan dapat diakses oleh pengguna dari berbagai perangkat tanpa memerlukan banyak perubahan.
+6. **Back-End dan Front-End:** Dengan teknologi seperti Node.js, JavaScript bisa digunakan tidak hanya di sisi klien (front-end) tapi juga di server (back-end), memungkinkan full-stack development menggunakan satu bahasa.
+   * Misal, di BizzSkin, JS digunakan untuk membuka dan menutup modal form saat menambahkan produk baru, sehingga membuat web halaman menjadi lebih interaktif.
+     ```Javascript
+     <script>
+     function showModal() {
+        modal.classList.remove('hidden'); 
+        setTimeout(() => {
+          modalContent.classList.remove('opacity-0', 'scale-95');
+          modalContent.classList.add('opacity-100', 'scale-100');
+        }, 50); 
+      }
+    
+      function hideModal() {
+        modalContent.classList.remove('opacity-100', 'scale-100');
+        modalContent.classList.add('opacity-0', 'scale-95');
+        setTimeout(() => {
+          modal.classList.add('hidden');
+        }, 150); 
+      }
+     </script>
+   * AJAX (Asynchronous JavaScript and XML) membantu mengambil dan mengirim data ke server tanpa perlu me-refresh halaman.
+     ```JavaScript
+     <script>
+      async function refreshProducts() {
+        const productCardsContainer = document.getElementById("product_cards");
+        const products = await getProducts();
+        let htmlString = "";
+       }
+     </script>
+   * JS membantu validasi form di sisi klien sebelum data dikirim ke server. Di bizzskin, dapat dipastikan dulu bahwa semua field diisi dengan benar sebelum mengirim data produk baru.
+     ```JavaScript
+     <script>
+     document.getElementById("productForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+     }
+     </script>
+
+## 2. **Fungsi Penggunaan `await` ketika Menggunakan `fetch()`**
+
+Saat menggunakan `fetch()`, fungsi `await` mengembalikan sebuah promise, yang mewakili operasi asinkron yang belum selesai. Dengan menambahkan `await` sebelum `fetch()`, kita memberi tahu JavaScript untuk menunda eksekusi hingga promise tersebut selesai, sehingga data yang diambil benar-benar tersedia sebelum melanjutkan kode di bawahnya. Penggunaan `await` sangat penting karena memastikan kita mendapatkan respons dari server sebelum melanjutkan ke langkah berikutnya. 
+
+Jika tidak menggunakan `await`, maka JavaScript tidak akan menunggu respons dari `fetch()` dan langsung melanjutkan eksekusi kode berikutnya. Program berpotensi mencoba memproses data yang belum diterima, yang akan menyebabkan kesalahan atau data yang tidak lengkap ditampilkan. 
+
+## 3. **Alasan Penggunaan `@csrf_exempt` pada View untuk AJAX POST**
+
+Decorator `csrf_exempt` digunakan untuk menonaktifkan perlindungan CSRF (Cross-Site Request Forgery) pada suatu view. Misalnya, dalam aplikasi seperti Bizzskin, ketika kita membuat view untuk menambahkan produk baru menggunakan AJAX POST, `csrf_exempt` memungkinkan server menerima permintaan AJAX dari klien tanpa memerlukan token CSRF.
+
+Serangan CSRF adalah jenis ancaman di mana penyerang dapat membuat permintaan tidak sah atas nama pengguna yang sah. Untuk melindungi dari serangan ini, Django secara default memeriksa token CSRF pada setiap permintaan POST. Namun, saat menggunakan AJAX, token CSRF mungkin tidak selalu tersedia atau dikirim dengan benar, terutama jika tidak disiapkan dengan baik di JavaScript.
+
+Dengan `csrf_exempt`, pemeriksaan token CSRF pada view tertentu akan dinonaktifkan, sehingga permintaan AJAX dapat diterima tanpa hambatan. Namun, menonaktifkan perlindungan CSRF dapat membuka potensi celah keamanan. Oleh karena itu, sebaiknya `csrf_exempt` hanya digunakan pada view yang menerima permintaan dari sumber yang tepercaya.
+
+## 4. **Mengapa Pembersihan Data Input Pengguna Dilakukan di Backend?**
+
+Pembersihan data di backend sangat penting untuk memastikan bahwa data yang diterima server valid dan aman. Misalnya, dalam aplikasi seperti `Bizzskin`, pembersihan data membantu mencegah serangan seperti Cross-Site Scripting (XSS), seperti yang dijelaskan dalam tutorial. Validasi ini bukan hanya soal tampilan frontend, tetapi juga memastikan bahwa data yang disimpan di database adalah data yang sesuai dengan harapan.
+
+Ketika pengguna mengirimkan data produk baru melalui form, data tersebut diproses oleh view di backend. Dalam hal ini, Django Forms digunakan untuk memvalidasi dan membersihkan data input. Django Forms secara otomatis memeriksa apakah data yang dimasukkan sesuai dengan tipe yang diharapkan dan menghilangkan karakter-karakter yang tidak diinginkan, sehingga data tetap aman dan terjaga integritasnya.
+
+Selain itu, melakukan pembersihan data di backend memberikan beberapa keuntungan penting:
+- **Keamanan**: Pengguna dapat memodifikasi atau memanipulasi kode frontend, sehingga validasi di frontend saja tidak bisa diandalkan. Dengan pembersihan data di backend, kita memastikan bahwa data selalu aman sebelum disimpan atau diproses.
+- **Integritas Data**: Backend mampu mengontrol dan menjaga konsistensi data yang masuk ke dalam sistem, memastikan data yang tidak valid atau berbahaya tidak akan tersimpan.
+- **Sentralisasi Validasi**: Validasi di backend memungkinkan penggunaan aturan yang seragam di seluruh aplikasi, sehingga mengurangi ketergantungan pada frontend dan mempermudah pemeliharaan keamanan dan konsistensi data. 
+
+
+## 5. **Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!**
+
+**1. Menambahkan Pesan Error pada Login Form**
+
+Tujuannya untuk menampilkan validasi kesalahan pada form login.
+  ```html
+  ...
+  <!-- Display form errors here -->
+      {% if form.errors %}
+        <div class="text-red-500 text-xs mt-1">
+          {{ form.errors }}
+        </div>
+      {% endif %}
+   ...
+  ```
+**2. Membuat Fungsi untuk Menambahkan Produk dengan AJAX**
+- Mengimport `from django.http import JsonResponse`
+- Membuat fungsi baru `create_product_ajax` untuk handle permintaan POST menggunakan AJAX di `main/views`
+  ```python
+  # New function to add product via AJAX
+  @csrf_exempt
+  @require_POST
+  def create_product_ajax(request):
+      form = ProductForm(request.POST, request.FILES)
+      if form.is_valid():
+          product = form.save(commit=False)
+          product.user = request.user
+          product.save()
+          return JsonResponse({
+              "message": "Product created successfully",
+              "product": {
+                  "id": str(product.id),
+                  "name": product.name,
+                  "price": product.price,
+                  "description": product.description,
+                  "skin_type": product.skin_type,                 
+              }
+          }, status=201)
+          
+      else:
+          return JsonResponse({"errors": form.errors}, status=400)
+  ```
+
+**3. Melakukan Routing untuk Fungsi `create_product_ajax` di `main/urls`**
+```from main.views import create_product_ajax```
+```python
+urlpatterns = [
+    ...
+    path('create-product-ajax', create_product_ajax, name='create_product_ajax'),
+]
+```
+**4. Menampilkan Data Produk dengan fetch() API**
+- Membuat fungsi `refreshProducts` untuk mengambil dan menampilkan data produk menggunakan AJAX GET di `main/templates/main.html`
+  ```html
+  <script>
+  async function getProducts() {
+    return fetch("{% url 'main:show_json' %}").then((res) => res.json());
+  }
+
+  async function refreshProducts() {
+    const productCardsContainer = document.getElementById("product_cards");
+    const products = await getProducts();
+    let htmlString = "";
+
+    if (products.length === 0) {
+      htmlString = `
+        <div class="col-span-full text-center py-8 sm:py-10 md:py-12">
+          <h3 class="text-lg sm:text-xl md:text-2xl font-semibold text-[#333333]">We couldn't find anything.</h3>
+          <p class="text-base sm:text-lg md:text-xl text-[#333333] mt-2">Drop yours here, one product at a time.</p>
+        </div>
+      `;
+    } else {
+      products.forEach((product) => {
+        const name = DOMPurify.sanitize(product.fields.name);
+        const description = DOMPurify.sanitize(product.fields.description);
+        const price = DOMPurify.sanitize(product.fields.price.toString());
+        const skin_type = DOMPurify.sanitize(product.fields.skin_type);
+
+        htmlString += `
+          <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+            <div class="text-left mt-3">
+              <h3 class="text-lg font-semibold text-gray-800 mb-1">${name}</h3>
+              <p class="text-sm text-gray-600 mb-2">${description}</p>
+              <p class="text-lg font-bold text-gray-900 mb-1">Rp${parseInt(price).toLocaleString()}</p>
+              <p class="text-sm text-gray-500 mb-2">Skin Type: ${skin_type}</p>
+            </div>
+            <div class="mt-4 flex justify-between">
+              <a href="/edit-product/${product.pk}" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300">Edit</a>
+              <a href="/delete-product/${product.pk}" class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition duration-300">Delete</a>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    productCardsContainer.innerHTML = htmlString;
+  }
+
+  refreshProducts();
+  </script>
+
+**5. Membuat Modal Sebagai Form untuk Menambahkan Produk**
+- Menambahkan modal form untuk menambahkan produk baru menggunakan AJAX POST di `main/templates/main.html`
+  ```html
+    <!-- Modal -->
+    <div id="crudModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-gray-800 bg-opacity-50 overflow-x-hidden overflow-y-auto transition-opacity duration-300 ease-out">
+      <div id="crudModalContent" class="relative bg-white rounded-lg shadow-lg w-5/6 sm:w-3/4 md:w-1/2 lg:w-1/3 mx-4 sm:mx-0 transform scale-95 opacity-0 transition-transform transition-opacity duration-300 ease-out">
+        <!-- Modal header -->
+        <div class="flex items-center justify-between p-4 border-b rounded-t">
+          <h3 class="text-xl font-semibold text-gray-900">
+            Add New Product
+          </h3>
+          <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" id="closeModalBtn">
+            <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 111.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="sr-only">Close modal</span>
+          </button>
+        </div>
+        <!-- Modal body -->
+        <div class="px-6 py-4 space-y-6 form-style">
+          <form id="productForm">
+            <div class="mb-4">
+              <label for="name" class="block text-sm font-medium text-gray-700">Product Name</label>
+              <input type="text" id="name" name="name" class="mt-1 block w-full border border-gray-300 rounded-md p-2" placeholder="Enter product name" required>
+            </div>
+            <div class="mb-4">
+              <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+              <textarea id="description" name="description" rows="3" class="mt-1 block w-full h-52 resize-none border border-gray-300 rounded-md p-2" placeholder="Enter product description" required></textarea>
+            </div>
+            <div class="mb-4">
+              <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
+              <input type="number" id="price" name="price" class="mt-1 block w-full border border-gray-300 rounded-md p-2" required>
+            </div>
+            <div class="mb-4">
+              <label for="skin_type" class="block text-sm font-medium text-gray-700">Skin Type</label>
+              <input type="text" id="skin_type" name="skin_type" class="mt-1 block w-full border border-gray-300 rounded-md p-2" required>
+            </div>
+          </form>
+        </div>
+        <!-- Modal footer -->
+        <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 p-6 border-t border-gray-200 rounded-b justify-center md:justify-end">
+          <button type="button" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg" id="cancelButton">Cancel</button>
+          <button type="submit" id="submitProduct" form="productForm" class="bg-[#333333] hover:bg-gray-200 hover:text-black text-white font-bold py-2 px-4 rounded-lg">Save</button>
+        </div>
+      </div>
+    </div>
+  
+    <footer class="mt-8 bg-gray-800 text-white py-4">
+      <!-- Footer content goes here -->
+    </footer>
+  </div
+  <script>
+  const modal = document.getElementById('crudModal');
+  const modalContent = document.getElementById('crudModalContent');
+
+  function showModal() {
+    modal.classList.remove('hidden'); 
+    setTimeout(() => {
+      modalContent.classList.remove('opacity-0', 'scale-95');
+      modalContent.classList.add('opacity-100', 'scale-100');
+    }, 50); 
+  }
+
+  function hideModal() {
+    modalContent.classList.remove('opacity-100', 'scale-100');
+    modalContent.classList.add('opacity-0', 'scale-95');
+    setTimeout(() => {
+      modal.classList.add('hidden');
+    }, 150); 
+  }
+
+  document.getElementById("cancelButton").addEventListener("click", hideModal);
+  document.getElementById("closeModalBtn").addEventListener("click", hideModal);
+
+  document.getElementById("productForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+    const formData = new FormData(this);
+
+    try {
+      const response = await fetch("{% url 'main:create_product_ajax' %}", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}",
+        },
+      });
+
+      if (response.ok) {
+        hideModal();
+        refreshProducts();
+        document.getElementById("productForm").reset(); 
+      } else {
+        const data = await response.json();
+        if (data.errors) {
+          for (const [field, messages] of Object.entries(data.errors)) {
+            const input = document.getElementById(field);
+            const errorContainer = document.createElement('p');
+            errorContainer.className = 'text-red-500 text-xs mt-1';
+            errorContainer.innerText = messages.join(', ');
+            input.parentNode.appendChild(errorContainer);
+          }
+        } else {
+          console.error('Unexpected error:', data);
+        }
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
+  });
+  </script>
+  ```
+**6. Menambahkan Data Produk dengan AJAX**
+- Menambahkan fungsi untuk menangani pengiriman form menggunakan AJAX POST.
+```python
+  ...
+  document.getElementById("productForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+    const formData = new FormData(this);
+
+    try {
+      const response = await fetch("{% url 'main:create_product_ajax' %}", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}",
+        },
+      });
+
+      if (response.ok) {
+        hideModal();
+        refreshProducts();
+        document.getElementById("productForm").reset(); 
+      } else {
+        const data = await response.json();
+        if (data.errors) {
+          for (const [field, messages] of Object.entries(data.errors)) {
+            const input = document.getElementById(field);
+            const errorContainer = document.createElement('p');
+            errorContainer.className = 'text-red-500 text-xs mt-1';
+            errorContainer.innerText = messages.join(', ');
+            input.parentNode.appendChild(errorContainer);
+          }
+        } else {
+          console.error('Unexpected error:', data);
+        }
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
+  });
+  ...
+</script>
+```
+
+**7. Melindungi Aplikasi dari Cross Site Scripting (XSS)**
+- Menggunakan DOMPurify untuk membersihkan data yang diambil dari server sebelum ditampilkan di halaman.
+
+```html
+...
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
+...  
+async function refreshProducts() {
+    const productCardsContainer = document.getElementById("product_cards");
+    const products = await getProducts();
+    let htmlString = "";
+
+    if (products.length === 0) {
+      htmlString = `
+        <div class="col-span-full text-center py-8 sm:py-10 md:py-12">
+          <h3 class="text-lg sm:text-xl md:text-2xl font-semibold text-[#333333]">We couldn't find anything.</h3>
+          <p class="text-base sm:text-lg md:text-xl text-[#333333] mt-2">Drop yours here, one product at a time.</p>
+        </div>
+      `;
+    } else {
+      products.forEach((product) => {
+        const name = DOMPurify.sanitize(product.fields.name);
+        const description = DOMPurify.sanitize(product.fields.description);
+        const price = DOMPurify.sanitize(product.fields.price.toString());
+        const skin_type = DOMPurify.sanitize(product.fields.skin_type);
+
+        htmlString += `
+          <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+            <div class="text-left mt-3">
+              <h3 class="text-lg font-semibold text-gray-800 mb-1">${name}</h3>
+              <p class="text-sm text-gray-600 mb-2">${description}</p>
+              <p class="text-lg font-bold text-gray-900 mb-1">Rp${parseInt(price).toLocaleString()}</p>
+              <p class="text-sm text-gray-500 mb-2">Skin Type: ${skin_type}</p>
+            </div>
+            <div class="mt-4 flex justify-between">
+              <a href="/edit-product/${product.pk}" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300">Edit</a>
+              <a href="/delete-product/${product.pk}" class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition duration-300">Delete</a>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    productCardsContainer.innerHTML = htmlString;
+  }
+
+  refreshProducts();
+</script>
+```
+**8. Membersihkan Data dengan DOMPurify**
+
+- Menggunakan DOMPurify untuk membersihkan data yang diambil dari server sebelum ditampilkan di halaman.
+```html
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
+<script>
+  async function getProducts() {
+    return fetch("{% url 'main:show_json' %}").then((res) => res.json());
+  }
+
+  async function refreshProducts() {
+    const productCardsContainer = document.getElementById("product_cards");
+    const products = await getProducts();
+    let htmlString = "";
+
+    if (products.length === 0) {
+      htmlString = `
+        <div class="col-span-full text-center py-8 sm:py-10 md:py-12">
+          <h3 class="text-lg sm:text-xl md:text-2xl font-semibold text-[#333333]">We couldn't find anything.</h3>
+          <p class="text-base sm:text-lg md:text-xl text-[#333333] mt-2">Drop yours here, one product at a time.</p>
+        </div>
+      `;
+    } else {
+      products.forEach((product) => {
+        const name = DOMPurify.sanitize(product.fields.name);
+        const description = DOMPurify.sanitize(product.fields.description);
+        const price = DOMPurify.sanitize(product.fields.price.toString());
+        const skin_type = DOMPurify.sanitize(product.fields.skin_type);
+        ...
+</script>
+```
+
+**9. Melakukan `add`, `commit`, dan `push`**
+
+
 </details>
