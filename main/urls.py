@@ -16,5 +16,5 @@ urlpatterns = [
     path('edit-product/<uuid:id>', edit_product, name='edit_product'),
     path('delete-product/<uuid:id>', delete_product, name='delete_product'),
     path('create-product-ajax', create_product_ajax, name='create_product_ajax'),
-    path('create-flutter', create_product_flutter, name='create_product_flutter'),
+    path('create-flutter/', create_product_flutter, name='create_product_flutter'),
 ]   
