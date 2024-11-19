@@ -13,6 +13,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
 from django.http import JsonResponse
+from .forms import ProductForm
+import json
 
 
 # Create your views here.
@@ -49,7 +51,7 @@ def show_xml(request):
 
 def show_json(request):
     # data = Product.objects.all()
-    data = Product.objects.filter(user=request.user)
+    data = Product.objects.filter(user=request.user.id)
     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 def show_xml_by_id(request, id):
@@ -141,3 +143,49 @@ def create_product_ajax(request):
         
     else:
         return JsonResponse({"errors": form.errors}, status=400)
+ 
+
+@csrf_exempt
+# @login_required
+def create_product_flutter(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            
+            # Validasi data
+            if not all(key in data for key in ["name", "price", "description", "skin_type"]):
+                return JsonResponse({
+                    "status": "error",
+                    "message": "Missing required fields"
+                }, status=400)
+
+            new_product = Product.objects.create(
+                user = request.user,
+                name = data["name"],
+                price = int(data["price"]),
+                description = data["description"],
+                skin_type = data["skin_type"]
+            )
+
+            new_product.save()
+
+            return JsonResponse({
+                "status": "success",
+                "message": "Product created successfully"
+            }, status=200)
+            
+        except json.JSONDecodeError:
+            return JsonResponse({
+                "status": "error",
+                "message": "Invalid JSON format"
+            }, status=400)
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=500)
+    
+    return JsonResponse({
+        "status": "error",
+        "message": "Invalid request method"
+    }, status=405)

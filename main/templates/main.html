@@ -16,6 +16,7 @@
     <h1 class="text-white text-2xl sm:text-3xl md:text-4xl font-bold">Welcome to BizzSkin</h1>
   </div>
 </div>
+<div>
 
 <div class="overflow-x-hidden px-4 md:px-8 pb-8 pt-24 min-h-screen bg-pink-100 flex flex-col">
   <div class="p-2 mb-6 relative">
@@ -98,6 +99,7 @@
   async function getProducts() {
     return fetch("{% url 'main:show_json' %}").then((res) => res.json());
   }
+  
 
   async function refreshProducts() {
     const productCardsContainer = document.getElementById("product_cards");
